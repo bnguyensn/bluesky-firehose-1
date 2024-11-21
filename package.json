@@ -1,6 +1,7 @@
 {
-  "name": "bluesky-firehose",
+  "name": "bluesky-firehose-1",
   "private": false,
+  "author": "bnguyensn",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
