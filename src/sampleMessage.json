@@ -1,0 +1,32 @@
+{
+  "did": "did:plc:ju5umte5fpyaxzbarugowrdl",
+  "time_us": 1732174755622777,
+  "kind": "commit",
+  "commit": {
+    "rev": "3lbgxijublu24",
+    "operation": "create",
+    "collection": "app.bsky.feed.post",
+    "rkey": "3lbgxijn65k22",
+    "record": {
+      "$type": "app.bsky.feed.post",
+      "createdAt": "2024-11-21T07:39:15.239Z",
+      "facets": [
+        {
+          "features": [
+            {
+              "$type": "app.bsky.richtext.facet#tag",
+              "tag": "穹受小ネタ"
+            }
+          ],
+          "index": {
+            "byteEnd": 815,
+            "byteStart": 799
+          }
+        }
+      ],
+      "langs": ["ja"],
+      "text": "メモ書き(なんかに使えそうな設定)\n\n💫\n大学生、死ぬ気で勉強して寮付きの大学に受かったのに取り壊しで追い出されて途方に暮れてるところを🦚に拾われる。二人に迫られて流されそうでこれで良いのかと思うけど好奇心も抑えきれない\n🦚\n今をときめくアイドル兼プロデューサー、🛁と共同生活してるけど可愛い子を見捨てられなくて連れ帰ったら🛁の生徒だった。付き合いたいけど💫くんの意思を尊重して口説いてる。\n🛁\n💫が通う大学の教授、直接💫の通うゼミを受け持ってはいないけど関わりは何かと多い。同居人の🦚が💫を拾ってきてひた隠しにしてきた恋心が爆発寸前。\n\n#穹受小ネタ"
+    },
+    "cid": "bafyreif5wjdjk5e5batu4zobjquactyr427igj6mwulykqouq7k5dy2ns4"
+  }
+}
