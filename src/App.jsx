@@ -10,32 +10,37 @@ function getPostText(rawMessage) {
 }
 
 const CREATED_POST_ELEMENT_ID = 'created-post';
-const MESSAGE_COUNT_ELEMENT_ID = 'message-count';
-function logToElementFactory(elementId) {
-  return function logToElement(...text) {
-    document.getElementById(elementId).textContent = text.join('');
-  };
-}
+const MESSAGES_COUNT_ELEMENT_ID = 'message-count';
+const WORDS_COUNT_ELEMENT_ID = 'word-count';
 
-function wsInit({ socketRef, messageCountRef, onOpen, onClose }) {
+function wsInit({
+  socketRef,
+  messagesCountRef,
+  wordsCountRef,
+  onOpen,
+  onClose,
+}) {
   socketRef.current = new WebSocket(wsUrlJetStream);
   const socket = socketRef.current;
-
-  const logMessage = logToElementFactory(CREATED_POST_ELEMENT_ID);
-  const logCount = logToElementFactory(MESSAGE_COUNT_ELEMENT_ID);
 
   let latestMessage = '';
   const REFRESH_RATE = 60;
   const updateInterval = 1000 / REFRESH_RATE;
   let lastUpdateTime = 0;
   const messageElement = document.getElementById(CREATED_POST_ELEMENT_ID);
-  const countElement = document.getElementById(MESSAGE_COUNT_ELEMENT_ID);
+  const messagesCountElement = document.getElementById(
+    MESSAGES_COUNT_ELEMENT_ID,
+  );
+  const wordsCountElement = document.getElementById(WORDS_COUNT_ELEMENT_ID);
+
+  const WORD_TO_COUNT = 'Trump';
 
   function socketOnMessageRAFCb(timestamp) {
     if (timestamp - lastUpdateTime >= updateInterval) {
       // Renders texts
       messageElement.textContent = latestMessage;
-      countElement.textContent = `Messages count: ${messageCountRef.current++}`;
+      messagesCountElement.textContent = `Messages count: ${messagesCountRef.current}`;
+      wordsCountElement.textContent = `Words count: ${wordsCountRef.current}`;
 
       // Setup for next render
       lastUpdateTime = timestamp;
@@ -43,6 +48,9 @@ function wsInit({ socketRef, messageCountRef, onOpen, onClose }) {
   }
 
   socket.addEventListener('open', (event) => {
+    messageElement.textContent = '';
+    messagesCountElement.textContent = '';
+    wordsCountElement.textContent = '';
     onOpen(event);
   });
 
@@ -51,10 +59,11 @@ function wsInit({ socketRef, messageCountRef, onOpen, onClose }) {
       const data = JSON.parse(event.data);
       if (data?.commit?.operation === 'create') {
         latestMessage = getPostText(data);
+        messagesCountRef.current++;
+        if (latestMessage.includes(WORD_TO_COUNT)) {
+          wordsCountRef.current++;
+        }
         requestAnimationFrame(socketOnMessageRAFCb);
-
-        // logMessage('Socket message: ', getPostText(data));
-        // logCount(`Message count: ${messageCountRef.current++}`);
       }
     } catch (err) {
       console.log('message is not valid JSON');
@@ -62,8 +71,8 @@ function wsInit({ socketRef, messageCountRef, onOpen, onClose }) {
   });
 
   socket.addEventListener('close', (event) => {
-    messageElement.textContent = '';
-    countElement.textContent = '';
+    messagesCountRef.current = 0;
+    wordsCountRef.current = 0;
     onClose(event);
   });
 
@@ -83,7 +92,8 @@ function SocketStatus({ isSocketConnected }) {
 
 function App() {
   const socketRef = useRef(null);
-  const messageCountRef = useRef(0);
+  const messagesCountRef = useRef(0);
+  const wordsCountRef = useRef(0);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
 
   useEffect(() => {
@@ -101,13 +111,13 @@ function App() {
         onClick={() => {
           wsInit({
             socketRef,
-            messageCountRef,
+            messagesCountRef,
+            wordsCountRef,
             onOpen: () => {
               setIsSocketConnected(true);
             },
             onClose: () => {
               setIsSocketConnected(false);
-              messageCountRef.current = 0;
             },
           });
         }}
@@ -125,7 +135,8 @@ function App() {
         Disconnect
       </button>
       <SocketStatus isSocketConnected={isSocketConnected} />
-      <p className="app-log" id={MESSAGE_COUNT_ELEMENT_ID}></p>
+      <p className="app-log" id={MESSAGES_COUNT_ELEMENT_ID}></p>
+      <p className="app-log" id={WORDS_COUNT_ELEMENT_ID}></p>
       <p className="app-log" id={CREATED_POST_ELEMENT_ID}></p>
     </main>
   );
