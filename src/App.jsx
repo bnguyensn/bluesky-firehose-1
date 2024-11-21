@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { wordToColor } from './utils/wordToColor';
 import './App.css';
 
 const wsUrlXrpc = 'wss://bsky.network/xrpc/com.atproto.sync.subscribeRepos';
@@ -12,6 +13,7 @@ function getPostText(rawMessage) {
 const CREATED_POST_ELEMENT_ID = 'created-post';
 const MESSAGES_COUNT_ELEMENT_ID = 'message-count';
 const WORDS_COUNT_ELEMENT_ID = 'word-count';
+const COLOR_SIGN_ELEMENT_ID = 'color-sign';
 
 function wsInit({
   socketRef,
@@ -32,6 +34,7 @@ function wsInit({
     MESSAGES_COUNT_ELEMENT_ID,
   );
   const wordsCountElement = document.getElementById(WORDS_COUNT_ELEMENT_ID);
+  const colorSignElement = document.getElementById(COLOR_SIGN_ELEMENT_ID);
 
   const WORD_TO_COUNT = 'Trump';
 
@@ -41,6 +44,9 @@ function wsInit({
       messageElement.textContent = latestMessage;
       messagesCountElement.textContent = `Messages count: ${messagesCountRef.current}`;
       wordsCountElement.textContent = `Words count: ${wordsCountRef.current}`;
+      colorSignElement.style.backgroundColor = wordToColor(
+        latestMessage.slice(0, 10),
+      );
 
       // Setup for next render
       lastUpdateTime = timestamp;
@@ -51,6 +57,7 @@ function wsInit({
     messageElement.textContent = '';
     messagesCountElement.textContent = '';
     wordsCountElement.textContent = '';
+    colorSignElement.style.backgroundColor = 'transparent';
     onOpen(event);
   });
 
@@ -137,6 +144,7 @@ function App() {
       <SocketStatus isSocketConnected={isSocketConnected} />
       <p className="app-log" id={MESSAGES_COUNT_ELEMENT_ID}></p>
       <p className="app-log" id={WORDS_COUNT_ELEMENT_ID}></p>
+      <div id={COLOR_SIGN_ELEMENT_ID} className="color-sign" />
       <p className="app-log" id={CREATED_POST_ELEMENT_ID}></p>
     </main>
   );

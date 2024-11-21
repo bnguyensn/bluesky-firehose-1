@@ -11,6 +11,12 @@ p.app-log {
   text-align: left;
 }
 
+.color-sign {
+  width: 50px;
+  height: 50px;
+  background-color: transparent;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
